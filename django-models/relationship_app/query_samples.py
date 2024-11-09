@@ -1,14 +1,14 @@
 from relationship_app.models import Book, Author, Library, Librarian
 
-def books_by_author(author):
+def books_by_author(author_name):
     try:
-        books = Book.objects.filter(author=author)
+        author = Author.objects.get(name=author_name)
         books = author.books.all()  
-        print(f"Books by {author}:")
+        print(f"Books by {author_name}:")
         for book in books:
             print(book.title)
     except Author.DoesNotExist:
-        print(f"No author found with the name {author}")
+        print(f"No author found with the name {author_name}")
 
 
 def books_in_library(library_name):
