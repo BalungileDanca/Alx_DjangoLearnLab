@@ -29,6 +29,6 @@ from django.contrib.auth.forms import UserCreationForm  # Import the default Use
 
 class register(CreateView):
     form_class = UserCreationForm  # Using Django's default form
-    template_name = 'registration/register.html'
+    template_name = '"relationship_app/register.html"'
     success_url = reverse_lazy('login')
     
