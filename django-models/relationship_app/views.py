@@ -24,15 +24,11 @@ from django.shortcuts import render, redirect
 from django.views.generic import CreateView
 from django.contrib.auth import login
 from django.urls import reverse_lazy
-from django.contrib.auth.forms import UserCreationForm
-from .forms import CustomUserCreationForm
+from django.contrib.auth.forms import UserCreationForm  # Import the default UserCreationForm
+ 
 
 class register(CreateView):
-    form_class = CustomUserCreationForm
+    form_class = UserCreationForm  # Using Django's default form
     template_name = 'registration/register.html'
-    success_url = reverse_lazy('login')  # Redirect to login after successful registration
-
-    def form_valid(self, form):
-        # Automatically log the user in after successful registration
-        user = form.save()
-        login(self.request, user)
+    success_url = reverse_lazy('login')
+    
