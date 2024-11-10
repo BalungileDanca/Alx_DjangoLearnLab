@@ -27,7 +27,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm
 from .forms import CustomUserCreationForm
 
-class RegisterView(CreateView):
+class register(CreateView):
     form_class = CustomUserCreationForm
     template_name = 'registration/register.html'
     success_url = reverse_lazy('login')  # Redirect to login after successful registration
