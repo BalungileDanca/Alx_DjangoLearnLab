@@ -29,3 +29,17 @@ urlpatterns = [
     path('librarian/', views.librarian_view, name='librarian_view'),
     path('member/', views.member_view, name='member_view'),
 ]
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    # URL for adding a new book
+    path('add/', views.add_book, name='add_book'),
+
+    # URL for editing an existing book (requires a book ID as parameter)
+    path('edit/<int:pk>/', views.edit_book, name='edit_book'),
+
+    # URL for deleting an existing book (requires a book ID as parameter)
+    path('delete/<int:pk>/', views.delete_book, name='delete_book'),
+]

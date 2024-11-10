@@ -62,3 +62,57 @@ def is_member(user):
 @user_passes_test(is_member)
 def member_view(request):
     return render(request, 'relationship_app/member_view.html')
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import permission_required
+from .forms import BookForm
+
+# Add a new book - only accessible if the user has the 'can_add_book' permission
+@permission_required('myapp.can_add_book', raise_exception=True)
+def add_book(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('book_list')  # Redirect to the book list or another page
+    else:
+        form = BookForm()
+    return render(request, 'add_book.html', {'form': form})
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import permission_required
+from .forms import BookForm
+from .models import Book
+
+# Edit an existing book - only accessible if the user has the 'can_change_book' permission
+@permission_required('myapp.can_change_book', raise_exception=True)
+def edit_book(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    
+    if request.method == 'POST':
+        form = BookForm(request.POST, instance=book)
+        if form.is_valid():
+            form.save()
+            return redirect('book_list')  # Redirect to the book list or another page
+    else:
+        form = BookForm(instance=book)
+    
+    return render(request, 'edit_book.html', {'form': form, 'book': book})
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import permission_required
+from .models import Book
+
+# Delete a book - only accessible if the user has the 'can_delete_book' permission
+@permission_required('myapp.can_delete_book', raise_exception=True)
+def delete_book(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    
+    if request.method == 'POST':
+        book.delete()
+        return redirect('book_list')  # Redirect to the book list or another page
+    
+    return render(request, 'confirm_delete.html', {'book': book})
