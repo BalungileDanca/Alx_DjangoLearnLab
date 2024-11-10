@@ -70,7 +70,7 @@ from django.contrib.auth.decorators import permission_required
 from .forms import BookForm
 
 # Add a new book - only accessible if the user has the 'can_add_book' permission
-@permission_required('myapp.can_add_book', raise_exception=True)
+@permission_required('relationship_app.can_add_book', raise_exception=True)
 def add_book(request):
     if request.method == 'POST':
         form = BookForm(request.POST)
@@ -88,7 +88,7 @@ from .forms import BookForm
 from .models import Book
 
 # Edit an existing book - only accessible if the user has the 'can_change_book' permission
-@permission_required('myapp.can_change_book', raise_exception=True)
+@permission_required('relationship_app.can_change_book', raise_exception=True)
 def edit_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
     
@@ -107,7 +107,7 @@ from django.contrib.auth.decorators import permission_required
 from .models import Book
 
 # Delete a book - only accessible if the user has the 'can_delete_book' permission
-@permission_required('myapp.can_delete_book', raise_exception=True)
+@permission_required('relationship_app.can_delete_book', raise_exception=True)
 def delete_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
     
