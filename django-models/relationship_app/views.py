@@ -21,22 +21,21 @@ class LibraryDetailView(DetailView):
 
 
 from django.shortcuts import render, redirect
-from django.views.generic import CreateView
 from django.contrib.auth import login
 from django.urls import reverse_lazy
-from django.contrib.auth.forms import UserCreationForm  # Import the default UserCreationForm
-from .forms import CustomUserCreationForm  # Custom form (optional)
+from django.contrib.auth.forms import UserCreationForm
 
-class RegisterView(CreateView):
-    form_class = UserCreationForm  # Using Django's built-in UserCreationForm
-    template_name = 'registration/register.html'  # Path to your registration template
-    success_url = reverse_lazy('login')  # Redirect to the login page after successful registration
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()  # Save the new user
+            login(request, user)  # Log the user in
+            return redirect(reverse_lazy('profile'))  # Redirect to the profile page after login
+    else:
+        form = UserCreationForm()
 
-    def form_valid(self, form):
-        # Automatically log the user in after successful registration
-        user = form.save()
-        login(self.request, user)
-        return redirect(self.success_url)
+    return render(request, 'relationship_app/register.html', {'form': form})
     
 from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test
