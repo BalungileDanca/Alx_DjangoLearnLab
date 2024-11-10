@@ -25,10 +25,14 @@ from django.views.generic import CreateView
 from django.contrib.auth import login
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm  # Import the default UserCreationForm
- 
+from .forms import CustomUserCreationForm  # Custom form (optional)
 
-class register(CreateView):
-    form_class = UserCreationForm  # Using Django's default form
-    template_name = '"relationship_app/register.html"'
-    success_url = reverse_lazy('login')
-    
+class RegisterView(CreateView):
+    form_class = CustomUserCreationForm  # Use CustomUserCreationForm or UserCreationForm
+    template_name = 'relationship_app/register.html'  # Template for registration page
+    success_url = reverse_lazy('login')  # Redirect to login after successful registration
+
+    def form_valid(self, form):
+        # Automatically log the user in after successful registration
+        user = form.save()
+        login(self.request, user)
