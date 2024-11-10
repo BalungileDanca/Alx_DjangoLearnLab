@@ -12,10 +12,10 @@ from . import views
 
 urlpatterns = [
     # Login View
-    path('login/', auth_views.LoginView.as_view(), name='login'),
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
 
     # Logout View
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='registration/logged_out.html'), name='logout'),
 
     # Register View (custom registration view)
     path('register/', views.RegisterView.as_view(), name='register'),
