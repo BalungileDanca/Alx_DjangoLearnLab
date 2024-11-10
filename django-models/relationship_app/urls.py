@@ -35,10 +35,10 @@ from . import views
 
 urlpatterns = [
     # URL for adding a new book
-    path('add/', views.add_book, name='add_book'),
+    path('add_book/', views.add_book, name='add_book'),
 
     # URL for editing an existing book (requires a book ID as parameter)
-    path('edit/<int:pk>/', views.edit_book, name='edit_book'),
+    path('edit_book/', views.edit_book, name='edit_book'),
 
     # URL for deleting an existing book (requires a book ID as parameter)
     path('delete/<int:pk>/', views.delete_book, name='delete_book'),
