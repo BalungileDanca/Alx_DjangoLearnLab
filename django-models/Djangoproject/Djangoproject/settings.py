@@ -37,8 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'relationship_app',
 ]
+
+LOGIN_REDIRECT_URL = '/'  # Home or dashboard after login
+LOGOUT_REDIRECT_URL = '/'  # Redirect after logout
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
