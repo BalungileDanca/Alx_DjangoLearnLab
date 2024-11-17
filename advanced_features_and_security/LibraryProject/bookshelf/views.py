@@ -63,12 +63,16 @@ def create_book(request):
 from django.shortcuts import render, redirect
 from .forms import BookForm
 
+from django.shortcuts import render, redirect
+from .forms import ExampleForm  # Add this import to reference the form
+
 def create_book(request):
     if request.method == 'POST':
-        form = BookForm(request.POST)
+        form = ExampleForm(request.POST)
         if form.is_valid():
-            form.save()  # Automatically saves the book after validation
-            return redirect('book_list')
+            form.save()  # Save the book instance
+            return redirect('book_list')  # Redirect after saving
     else:
-        form = BookForm()
-    return render(request, 'create_book.html', {'form': form})
+        form = ExampleForm()  # Empty form for GET request
+
+    return render(request, 'bookshelf/create_book.html', {'form': form})
