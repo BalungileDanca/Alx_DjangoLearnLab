@@ -21,7 +21,7 @@ def create_book(request):
             author=author,
             published_date=published_date
         )
-        return redirect('create')  # Redirect to book list view
+        return redirect('book_list')  # Redirect to book list view
     return render(request, 'bookshelf/create_book.html')
 
 @permission_required('bookshelf.can_edit', raise_exception=True)
@@ -42,5 +42,5 @@ def edit_book(request, book_id):
 def delete_book(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     book.delete()
-    return redirect('delete')
+    return redirect('book_list')
  
