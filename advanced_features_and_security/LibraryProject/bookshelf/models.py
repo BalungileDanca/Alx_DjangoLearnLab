@@ -5,6 +5,20 @@ class Book(models.Model):
     publication_year = models.IntegerField()
     publication_year = models.IntegerField(null=True)
 
+    class Meta:
+        permissions = [
+            ('can_view', 'can view'),
+            ('can_edit', 'can edit'),
+            ('can_create', 'can create'),
+            ('can_delete', 'can delete'),
+        ]
+
+    def __str__(self):
+        return self.title
+
+
+    
+
 from django.contrib.auth.models import BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -62,5 +76,15 @@ class LogEntry(models.Model):
         related_name='bookshelf_logentries'  # Use a unique related_name
     )
    
+from django.db import models
 
-# Create your models here.
+class Post(models.Model):
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+
+
+    
