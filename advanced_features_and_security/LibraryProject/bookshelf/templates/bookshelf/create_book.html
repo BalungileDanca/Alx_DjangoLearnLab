@@ -1,0 +1,9 @@
+<!-- create_book.html -->
+<form method="POST">
+    {% csrf_token %}
+    <label for="title">Book Title:</label>
+    <input type="text" name="title" required>
+    <label for="author">Author:</label>
+    <input type="text" name="author" required>
+    <button type="submit">Create Book</button>
+</form>

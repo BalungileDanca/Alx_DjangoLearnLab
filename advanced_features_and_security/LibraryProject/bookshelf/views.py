@@ -43,4 +43,32 @@ def delete_book(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     book.delete()
     return redirect('book_list')
- 
+
+
+from django.shortcuts import render
+from .models import Book
+
+def search_books(request):
+    query = request.GET.get('query', '')
+    books = Book.objects.filter(title__icontains=query)  # Safely searching for books
+    return render(request, 'book_list.html', {'books': books})
+
+from django.views.decorators.csrf import csrf_protect
+
+@csrf_protect
+def create_book(request):
+    # View logic here
+    return render(request, 'create_book.html')
+
+from django.shortcuts import render, redirect
+from .forms import BookForm
+
+def create_book(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()  # Automatically saves the book after validation
+            return redirect('book_list')
+    else:
+        form = BookForm()
+    return render(request, 'create_book.html', {'form': form})

@@ -23,7 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+fi)-w!5a+g65)@1r71do=oq@tdbd0!&+%bndvj^6bdmnbb-7h'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
+SECURE_BROWSER_XSS_FILTER = True  # Enable the XSS filter in browsers
+X_FRAME_OPTIONS = 'DENY'  # Prevent the site from being embedded in an iframe (Clickjacking protection)
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent browsers from guessing the content type of responses
+
+CSRF_COOKIE_SECURE = True  # Ensure CSRF cookie is only sent over HTTPS
+SESSION_COOKIE_SECURE = True  # Ensure session cookie is only sent over HTTPS
 
 ALLOWED_HOSTS = []
 
@@ -38,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bookshelf.apps.BookshelfConfig',
+    'csp',
 ]
 
 MIDDLEWARE = [
@@ -48,7 +56,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',  # Add CSP middleware
 ]
+
+CSP_DEFAULT_SRC = ("'self'",)  # Only allow content from the same domain
+CSP_SCRIPT_SRC = ("'self'", 'https://trusted-cdn.com')  # Allow scripts from the same domain and trusted external CDN
+CSP_STYLE_SRC = ("'self'", 'https://trusted-styles.com')  # Allow styles from the same domain and trusted external CDN
 
 ROOT_URLCONF = 'LibraryProject.urls'
 
