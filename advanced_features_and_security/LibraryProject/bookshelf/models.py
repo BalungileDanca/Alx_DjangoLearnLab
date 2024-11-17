@@ -5,37 +5,31 @@ class Book(models.Model):
     publication_year = models.IntegerField()
     publication_year = models.IntegerField(null=True)
 
-
-from django.contrib.auth.models import BaseUserManager
-
-class CustomUserManager(BaseUserManager):
-     def create_user(self, username, email, password=None, date_of_birth=None, profile_photo=None):
-         if not date_of_birth:
-             raise ValueError('date of birth is required')
-         user = self.model(username=username, date_of_birth=date_of_birth, profile_photo=profile_photo)
-         user.set_password(password)
-         user.save(using=self._db)
-         return user
-     def create_superuser(self, username, password=None, date_of_birth=None, profile_photo=None):
-         user = self.create_user(username, password, date_of_birth, profile_photo)
-         user.is_staff = True
-         user.is_superuser = True
-         user.save(using=self._db)
-         return user
-          
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
+    # Add custom fields
     date_of_birth = models.DateField(null=True, blank=True)
     profile_photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)
-    
+
     objects = CustomUserManager()
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
     def __str__(self):
         return self.username
+    
+
+from django.db import models
+from django.conf import settings
+
+class LogEntry(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True,
+        related_name='bookshelf_logentries'  # Use a unique related_name
+    )
    
 
 # Create your models here.
