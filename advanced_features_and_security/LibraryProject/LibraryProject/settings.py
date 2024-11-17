@@ -32,6 +32,13 @@ SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent browsers from guessing the content
 CSRF_COOKIE_SECURE = True  # Ensure CSRF cookie is only sent over HTTPS
 SESSION_COOKIE_SECURE = True  # Ensure session cookie is only sent over HTTPS
 
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000  # 1 year in seconds
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+
+
 ALLOWED_HOSTS = []
 
 
