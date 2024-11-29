@@ -7,5 +7,6 @@ urlpattern = [
     path('books/create/', BookCreateView.as_view(), name='book-create'),
     path('books/update/', BookUpdateView.as_view(), name='book-update'),
     path('books/delete', BookDeleteView.as_view(), name='book-delete'),
+    
 
 ]
