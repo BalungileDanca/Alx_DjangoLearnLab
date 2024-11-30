@@ -8,12 +8,13 @@ from rest_framework.filters import SearchFilter
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
-import django_filters
+from django_filters import rest_framework as filters  # Correct import for django-filters integration with DRF
 
-class BookFilter(django_filters.FilterSet):
-    title = django_filters.CharFilter(lookup_expr='icontains')
-    author = django_filters.CharFilter(lookup_expr='icontains')
-    publication_year = django_filters.NumberFilter()
+# Define the filter class for filtering books by title, author, and publication year
+class BookFilter(filters.FilterSet):
+    title = filters.CharFilter(lookup_expr='icontains')  # Partial match for title (case-insensitive)
+    author = filters.CharFilter(lookup_expr='icontains')  # Partial match for author (case-insensitive)
+    publication_year = filters.NumberFilter()  # Exact match for publication year
 
     class Meta:
         model = Book
