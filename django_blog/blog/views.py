@@ -14,12 +14,12 @@ def register(request):
     else:
         form = CustomUserCreationForm()
 
-    return render(request,'registration/register.html', {'form': form})
+    return render(request,'blog/register.html', {'form': form})
 
 
 @login_required
 def profile(request):
-    return render(request,'registration/profile.html')
+    return render(request,'blog/profile.html')
 
 from django.contrib.auth.forms import UserChangeForm
 
@@ -32,7 +32,7 @@ def edit_profile(request):
             return redirect('profile')
     else:
         form = UserChangeForm(instance=request.user)
-    return render(request, 'registration/edit_profile.html', {'form': form})
+    return render(request, 'blog/edit_profile.html', {'form': form})
 
 @login_required
 def profile_view(request):
