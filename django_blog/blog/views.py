@@ -49,10 +49,11 @@ class PostListView(ListView):
     ordering = ['-published_date']
 
     def get_context_data(self, **kwargs):
+        # This should be valid
         context = super().get_context_data(**kwargs)
-        context['custom_key'] = "Custom value"  # Ensure key is a string
+        context['custom_key'] = 'Custom value'  # Ensure keys are strings
         return context
-
+    
 class PostDetailView(DetailView):
     model = Post 
     template_name = 'blog/post_detail.html'
