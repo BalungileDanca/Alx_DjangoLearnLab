@@ -55,7 +55,7 @@ ROOT_URLCONF = 'django_blog.urls'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "blog" / "static",  # If you want to include the 'static' folder in the 'blog' app
+    BASE_DIR / "static",  # If you want to include the 'static' folder in the 'blog' app
 ]
 
 

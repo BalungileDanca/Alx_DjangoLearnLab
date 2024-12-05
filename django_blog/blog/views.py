@@ -34,6 +34,12 @@ def edit_profile(request):
         form = UserChangeForm(instance=request.user)
     return render(request, 'registration/edit_profile.html', {'form': form})
 
+@login_required
+def profile_view(request):
+    if request.method == 'POST':
+        request.user.email = request.POST.get('email', '')
+        request.user.save()
+    return render(request, 'profile.html', {'user': request.user})
 
 
 
