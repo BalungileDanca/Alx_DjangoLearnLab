@@ -1,7 +1,8 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
-from django.views.generic import TemplateView
+from .views import PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView
+
 
 
 urlpatterns= [
@@ -10,4 +11,11 @@ urlpatterns= [
     path('register/', views.register, name='register'),
     path('profile/', views.profile, name='profile'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
+    #task2
+    path('',PostListView.as_view(), name='post-list'),
+    path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+    path('post/new/', PostCreateView.as_view(), name='post-create'),
+    path('post/<int:pk>/edit/', PostUpdateView.as_view(), name='post-update'),
+    path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
 ]
+

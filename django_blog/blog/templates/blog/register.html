@@ -5,10 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">  <!-- Correct Path -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <h2>Register</h2>
+
+    <!-- Error Display Section -->
+    {% if form.errors %}
+        <ul>
+            {% for field, errors in form.errors.items %}
+                <li><strong>{{ field }}:</strong> {{ errors|join:", " }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <!-- Registration Form -->
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
