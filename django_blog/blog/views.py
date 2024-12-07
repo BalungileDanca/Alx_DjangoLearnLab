@@ -1,5 +1,5 @@
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from .form import CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
@@ -39,19 +39,19 @@ def edit_profile(request):
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Post
-from .form import PostForm
-
+from .models import Post, Comment
+from django.http import HttpResponseForbidden
+from .form import PostForm, CommentForm
+from django.urls import reverse_lazy
 class PostListView(ListView):
     model = Post
     template_name = 'blog/post_list.html'
-    context_object_name = Post
+    context_object_name = 'Post'
     ordering = ['-published_date']
 
     def get_context_data(self, **kwargs):
-        # This should be valid
         context = super().get_context_data(**kwargs)
-        context['custom_key'] = 'Custom value'  # Ensure keys are strings
+        context['custom_key'] = "Valid"
         return context
     
 class PostDetailView(DetailView):
@@ -62,6 +62,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = 'blog/post_form.html'
+    success_url = reverse_lazy('post-list')
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -86,6 +87,45 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
+    
+
+
+def post_detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    comments = post.comments.all()
+    form = CommentForm()
+    if request.method == 'POST' and request.user.is_authenticated:
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            return redirect('post_detail', pk=pk)
+    return render(request, 'blog/post_detail.html', {'post': post, 'comments': comments, 'form': form})
+
+@login_required
+def edit_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    if comment.author != request.user:
+        return HttpResponseForbidden()
+    if request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('post_detail', pk=comment.post.pk)
+    else:
+        form = CommentForm(instance=comment)
+    return render(request, 'blog/edit_comment.html', {'form': form})
+
+@login_required
+def delete_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    if comment.author != request.user:
+        return HttpResponseForbidden()
+    post_id = comment.post.pk
+    comment.delete()
+    return redirect('post_detail', pk=post_id)
 
 
 

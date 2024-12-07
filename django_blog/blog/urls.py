@@ -12,10 +12,13 @@ urlpatterns= [
     path('profile/', views.profile, name='profile'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
     #task2
-    path('',PostListView.as_view(), name='post-list'),
+    path('post/list/',PostListView.as_view(), name='post-list'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
     path('post/new/', PostCreateView.as_view(), name='post-create'),
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
+    #task3
+    path('comments/<int:pk>/edit/', views.edit_comment, name='edit_comment'),
+    path('comments/<int:pk>/delete/', views.delete_comment, name='delete_comment'),
 ]
 
