@@ -1,7 +1,7 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
-from .form import CustomUserCreationForm
+from .forms import CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserChangeForm
 
@@ -41,7 +41,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post, Comment
 from django.http import HttpResponseForbidden
-from .form import PostForm, CommentForm
+from .forms import PostForm, CommentForm
 from django.urls import reverse_lazy
 class PostListView(ListView):
     model = Post
