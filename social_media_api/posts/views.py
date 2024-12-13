@@ -1,5 +1,9 @@
 from django.shortcuts import render
-
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions
 from rest_framework import viewsets
 from .models import Post, Comment
 from django_filters.rest_framework import DjangoFilterBackend
@@ -36,5 +40,20 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Automatically set the author to the logged-in user
         serializer.save(author=self.request.user)
+
+class FeedView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        # Fetch the users the current user is following
+        following_users = request.user.following.all()
+
+        # Fetch posts authored by these users, ordered by creation time
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
+
+        # Serialize the posts
+        serializer = PostSerializer(posts, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
