@@ -55,5 +55,86 @@ class FeedView(APIView):
         serializer = PostSerializer(posts, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+from django.shortcuts import render
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Post, Like
+from notifications.models import Notification
+from django.contrib.contenttypes.models import ContentType
+
+@login_required
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user = request.user
+
+    # Check if the user has already liked the post
+    if Like.objects.filter(post=post, user=user).exists():
+        return JsonResponse({'error': 'You have already liked this post.'}, status=400)
+
+    # Create a like
+    Like.objects.create(post=post, user=user)
+
+    # Create a notification
+    Notification.objects.create(
+        recipient=post.author,  # Assuming Post has an author field
+        actor=user,
+        verb='liked',
+        target=post,
+    )
+
+    return JsonResponse({'message': 'Post liked successfully.'})
+
+
+@login_required
+def unlike_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user = request.user
+
+    # Check if the user has liked the post
+    like = Like.objects.filter(post=post, user=user).first()
+    if not like:
+        return JsonResponse({'error': 'You have not liked this post.'}, status=400)
+
+    # Delete the like
+    like.delete()
+
+    return JsonResponse({'message': 'Post unliked successfully.'})
+
+@login_required
+def fetch_notifications(request):
+    """
+    Fetch all notifications for the authenticated user, 
+    showing unread notifications prominently.
+    """
+    notifications = Notification.objects.filter(recipient=request.user).order_by('-timestamp')
+    unread_notifications = notifications.filter(read=False)
+
+    data = {
+        'unread': [
+            {
+                'id': notif.id,
+                'actor': notif.actor.username,
+                'verb': notif.verb,
+                'target': str(notif.target),
+                'timestamp': notif.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            }
+            for notif in unread_notifications
+        ],
+        'all': [
+            {
+                'id': notif.id,
+                'actor': notif.actor.username,
+                'verb': notif.verb,
+                'target': str(notif.target),
+                'timestamp': notif.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                'read': notif.read,
+            }
+            for notif in notifications
+        ],
+    }
+
+    return JsonResponse(data)
 
 
