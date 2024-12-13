@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
 from .models import CustomUser
@@ -50,7 +50,7 @@ class ProfileView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class FollowUserView(APIView):
+class FollowUserView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
@@ -63,8 +63,9 @@ class FollowUserView(APIView):
             return Response({"message": f"You are now following {target_user.username}."}, status=status.HTTP_200_OK)
         except CustomUser.DoesNotExist:
             return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-        
-class UnfollowUserView(APIView):
+
+
+class UnfollowUserView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
@@ -77,7 +78,3 @@ class UnfollowUserView(APIView):
             return Response({"message": f"You have unfollowed {target_user.username}."}, status=status.HTTP_200_OK)
         except CustomUser.DoesNotExist:
             return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-
-
-
-
