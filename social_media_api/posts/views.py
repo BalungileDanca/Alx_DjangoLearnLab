@@ -62,79 +62,48 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Post, Like
 from notifications.models import Notification
+from rest_framework import generics
 from django.contrib.contenttypes.models import ContentType
 
 @login_required
-def like_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    user = request.user
+def like_post(request, pk):
+    """
+    Allows an authenticated user to like a post.
+    If the user already liked the post, no duplicate is created.
+    """
+    # Safely retrieve the post or return a 404 error
+    post = generics.get_object_or_404(Post, pk=pk)
 
-    # Check if the user has already liked the post
-    if Like.objects.filter(post=post, user=user).exists():
-        return JsonResponse({'error': 'You have already liked this post.'}, status=400)
+    # Get or create a like for this post and user
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
 
-    # Create a like
-    Like.objects.create(post=post, user=user)
-
-    # Create a notification
-    Notification.objects.create(
-        recipient=post.author,  # Assuming Post has an author field
-        actor=user,
-        verb='liked',
-        target=post,
-    )
-
-    return JsonResponse({'message': 'Post liked successfully.'})
+    if created:
+        # Create a notification if the like was just created
+        Notification.objects.create(
+            recipient=post.author,  # Assuming Post has an 'author' field
+            actor=request.user,
+            verb='liked',
+            target=post,
+        )
+        return JsonResponse({'message': 'Post liked successfully.'})
+    else:
+        return JsonResponse({'message': 'You already liked this post.'}, status=400)
 
 
 @login_required
-def unlike_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    user = request.user
-
-    # Check if the user has liked the post
-    like = Like.objects.filter(post=post, user=user).first()
-    if not like:
-        return JsonResponse({'error': 'You have not liked this post.'}, status=400)
-
-    # Delete the like
-    like.delete()
-
-    return JsonResponse({'message': 'Post unliked successfully.'})
-
-@login_required
-def fetch_notifications(request):
+def unlike_post(request, pk):
     """
-    Fetch all notifications for the authenticated user, 
-    showing unread notifications prominently.
+    Allows an authenticated user to unlike a post if they have already liked it.
     """
-    notifications = Notification.objects.filter(recipient=request.user).order_by('-timestamp')
-    unread_notifications = notifications.filter(read=False)
+    # Safely retrieve the post or return a 404 error
+    post = generics.get_object_or_404(Post, pk=pk)
 
-    data = {
-        'unread': [
-            {
-                'id': notif.id,
-                'actor': notif.actor.username,
-                'verb': notif.verb,
-                'target': str(notif.target),
-                'timestamp': notif.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
-            }
-            for notif in unread_notifications
-        ],
-        'all': [
-            {
-                'id': notif.id,
-                'actor': notif.actor.username,
-                'verb': notif.verb,
-                'target': str(notif.target),
-                'timestamp': notif.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
-                'read': notif.read,
-            }
-            for notif in notifications
-        ],
-    }
+    # Check if the like exists
+    like = Like.objects.filter(user=request.user, post=post).first()
 
-    return JsonResponse(data)
-
-
+    if like:
+        # Delete the like
+        like.delete()
+        return JsonResponse({'message': 'Post unliked successfully.'})
+    else:
+        return JsonResponse({'message': 'You have not liked this post.'}, status=400)
