@@ -37,4 +37,4 @@ class CommentViewSet(viewsets.ModelViewSet):
         # Automatically set the author to the logged-in user
         serializer.save(author=self.request.user)
 
-#task 1
+
