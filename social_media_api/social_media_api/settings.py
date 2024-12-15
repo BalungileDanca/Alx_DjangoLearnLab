@@ -23,9 +23,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-4jna1lvd#@qk^red5o^&dl9q#p=!+q38zjdo)7w4d@qq^16m38'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_SSL_REDIRECT = True
+SECRET_KEY = os.getenv('SECRET_KEY', 'replace-this-with-a-secure-key')
+STATIC_URL = '/static/'
+STATIC_ROOT = '/path/to/staticfiles/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/path/to/mediafiles/'
 
 
 # Application definition
@@ -92,8 +102,12 @@ WSGI_APPLICATION = 'social_media_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'Nqobile',
+        'USER': 'root',  # USER here is the database user
+        'PASSWORD': 'Balungile@321',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
